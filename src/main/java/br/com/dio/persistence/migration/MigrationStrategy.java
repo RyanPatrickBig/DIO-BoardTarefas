@@ -17,7 +17,7 @@ import static br.com.dio.persistence.config.ConnectionConfig.getConnection;
 @AllArgsConstructor
 public class MigrationStrategy {
 
-    private final Connection connection;
+    private Connection connection;
 
     public void executeMigration(){
         var originalOut = System.out;

@@ -15,7 +15,7 @@ import static java.util.Objects.nonNull;
 @AllArgsConstructor
 public class CardDAO {
 
-    private Connection connection;
+    private final Connection connection;
 
     public CardEntity insert(final CardEntity entity) throws SQLException {
         var sql = "INSERT INTO CARDS (title, description, board_column_id) values (?, ?, ?);";

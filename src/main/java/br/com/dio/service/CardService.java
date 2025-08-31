@@ -6,6 +6,7 @@ import br.com.dio.exception.CardFinishedException;
 import br.com.dio.exception.EntityNotFoundException;
 import br.com.dio.persistence.dao.BlockDAO;
 import br.com.dio.persistence.dao.CardDAO;
+import br.com.dio.persistence.dao.MovementsRegisterDAO;
 import br.com.dio.persistence.entity.CardEntity;
 import lombok.AllArgsConstructor;
 
@@ -13,8 +14,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static br.com.dio.persistence.entity.BoardColumnKindEnum.CANCEL;
-import static br.com.dio.persistence.entity.BoardColumnKindEnum.FINAL;
+import static br.com.dio.persistence.entity.BoardColumnKindEnum.*;
 
 
 @AllArgsConstructor
@@ -26,6 +26,8 @@ public class CardService {
         try {
             var dao = new CardDAO(connection);
             dao.insert(entity);
+            var moveDAO = new MovementsRegisterDAO(connection);
+            moveDAO.move(entity.getBoardColumn().getId(),entity.getId());
             connection.commit();
             return entity;
         } catch (SQLException ex){
@@ -56,6 +58,9 @@ public class CardService {
                     .filter(bc -> bc.order() == currentColumn.order() + 1)
                     .findFirst().orElseThrow(() -> new IllegalStateException("O card está cancelado"));
             dao.moveToColumn(nextColumn.id(), cardId);
+            var moveDAO = new MovementsRegisterDAO(connection);
+            moveDAO.remove(cardId);
+            moveDAO.move(nextColumn.id(), cardId);
             connection.commit();
         }catch (SQLException ex){
             connection.rollback();

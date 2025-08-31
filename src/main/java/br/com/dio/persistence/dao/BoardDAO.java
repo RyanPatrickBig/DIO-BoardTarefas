@@ -11,7 +11,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class BoardDAO {
 
-    private Connection connection;
+    private final Connection connection;
 
     public BoardEntity insert(final BoardEntity entity) throws SQLException {
         var sql = "INSERT INTO BOARDS (name) values (?);";
